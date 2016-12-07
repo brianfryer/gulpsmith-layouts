@@ -1,0 +1,15 @@
+nav a {
+  color: green; }
+
+footer {
+  color: gray;
+  background-color: whitesmoke; }
+
+body {
+  background-color: red; }
+
+main {
+  outline: none !important; }
+
+h1, p {
+  text-align: center; }
