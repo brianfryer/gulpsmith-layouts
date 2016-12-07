@@ -50,7 +50,7 @@ gulp.task('build:in-place', function() {
 gulp.task('build:styles', function() {
     return gulp.src('source/assets/styles/main.scss')
         .pipe(plugins.sass())
-        .pipe(gulp.dest('dist/'));
+        .pipe(gulp.dest('dist/css/'));
 });
 
 // Remove pre-existing content from output and test folders
