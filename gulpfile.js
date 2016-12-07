@@ -2,11 +2,13 @@ var assign = require('lodash.assign');
 var del = require('del');
 var gulp = require('gulp');
 var gulpsmith = require('gulpsmith');
+var handlebars = require('handlebars');
 var layouts = require('metalsmith-layouts');
+var inPlace = require('metalsmith-in-place');
 var plugins = require('gulp-load-plugins')({ scope: ['devDependencies'] });
 
-gulp.task('build:pages', function() {
-    return gulp.src('source/pages/**/*.hbs')
+gulp.task('build:layout', function() {
+    return gulp.src('source/pages/layout.hbs')
         .pipe(plugins.frontMatter()
             .on('data', function(file) {
                 assign(file, file.frontMatter);
@@ -18,6 +20,25 @@ gulp.task('build:pages', function() {
                 engine: 'handlebars',
                 default: 'default.hbs',
                 directory: 'source/layouts/',
+                partials: 'source/partials/',
+                pattern: '**/*.hbs',
+                rename: true
+            }))
+        )
+        .pipe(gulp.dest('dist/'));
+});
+
+gulp.task('build:in-place', function() {
+    return gulp.src('source/pages/in-place.hbs')
+        .pipe(plugins.frontMatter()
+            .on('data', function(file) {
+                assign(file, file.frontMatter);
+                delete file.frontMatter;
+            })
+        )
+        .pipe(gulpsmith()
+            .use(inPlace({
+                engine: 'handlebars',
                 partials: 'source/partials/',
                 pattern: '**/*.hbs',
                 rename: true
@@ -41,13 +62,14 @@ gulp.task('clean:dist', function() {
 gulp.task('compile', [
     'clean:dist',
     'build:styles',
-    'build:pages'
+    'build:in-place'
 ]);
 
 // Compile files when something changes and start the webserver
 gulp.task('watch', ['compile'], function() {
     gulp.watch('source/**/*.scss', ['build:styles']);
-    gulp.watch('source/**/*.hbs',  ['build:pages']);
+    gulp.watch('source/pages/layout.hbs',   ['build:layout']);
+    gulp.watch('source/pages/in-place.hbs', ['build:in-place']);
 });
 
 // localhost
